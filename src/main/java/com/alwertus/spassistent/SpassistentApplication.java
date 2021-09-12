@@ -10,7 +10,7 @@ import java.io.IOException;
 public class SpassistentApplication {
 
     public static void main(String[] args) {
-        String path = "~/testfile.txt";
+        String path = "testfile.txt";
         File f = new File(path);
         try {
             f.createNewFile();
