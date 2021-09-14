@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 public class MainController {
 
-    @GetMapping("/")
+    @GetMapping("/spassistent")
     public String request() {
         return "zzzzz";
     }
