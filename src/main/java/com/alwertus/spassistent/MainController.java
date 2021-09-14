@@ -10,6 +10,6 @@ public class MainController {
 
     @GetMapping("/spassistent")
     public String request() {
-        return "zzzzz";
+        return "zzzzzgg";
     }
 }
