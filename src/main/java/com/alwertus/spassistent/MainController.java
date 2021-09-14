@@ -1,15 +1,17 @@
 package com.alwertus.spassistent;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+//import org.springframework.web.bind.annotation.GetMapping;
 
-@RestController
-@RequestMapping
+@Controller
 public class MainController {
+    public MainController() {
+        System.out.println("CONSTRUCTOR");
+    }
 
-    @GetMapping("/spassistent")
+//    @GetMapping("/hello")
     public String request() {
-        return "zzzzzgg";
+        System.out.println("ZOZO");
+        return "helloMzfk";
     }
 }
