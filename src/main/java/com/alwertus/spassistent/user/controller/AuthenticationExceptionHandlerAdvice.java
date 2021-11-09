@@ -1,5 +1,6 @@
-package com.alwertus.spassistent.auth.controller;
+package com.alwertus.spassistent.user.controller;
 
+import com.alwertus.spassistent.user.view.AuthenticationResponseError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -12,14 +13,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+
+/**
+ * Authentication error handler
+ */
 @ControllerAdvice
 public class AuthenticationExceptionHandlerAdvice implements AuthenticationEntryPoint {
+
+    // on error BadCredential
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleException(BadCredentialsException e) {
 
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
-                .body(e.getMessage());
+                .body(new AuthenticationResponseError(e.getMessage()));
     }
 
     @Override

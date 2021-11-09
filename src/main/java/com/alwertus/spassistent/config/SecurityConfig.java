@@ -1,11 +1,12 @@
 package com.alwertus.spassistent.config;
 
-import com.alwertus.spassistent.auth.controller.AuthenticationExceptionHandlerAdvice;
-import com.alwertus.spassistent.auth.jwt.JwtRequestFilter;
+import com.alwertus.spassistent.user.controller.AuthenticationExceptionHandlerAdvice;
+import com.alwertus.spassistent.user.jwt.JwtRequestFilter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -45,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .cors().and()
                 .csrf().disable()
+
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // spring security do not use session state
 
@@ -57,12 +59,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeRequests()
 
-                .antMatchers("/auth")
+                .antMatchers(HttpMethod.POST,
+                        "/auth",
+                        "/verify",
+                        "/register",
+                        "/refresh")
                     .permitAll()
+                .antMatchers(HttpMethod.POST,
+                        "/update-user")
+                    .authenticated()
                 .anyRequest()
                     .authenticated();
-
-
     }
 
     @Override

@@ -1,7 +1,7 @@
-package com.alwertus.spassistent.auth.controller;
+package com.alwertus.spassistent.user.service;
 
-import com.alwertus.spassistent.auth.model.JwtProperties;
-import com.alwertus.spassistent.auth.model.JwtToken;
+import com.alwertus.spassistent.user.model.JwtProperties;
+import com.alwertus.spassistent.user.model.JwtToken;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

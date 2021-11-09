@@ -1,4 +1,4 @@
-package com.alwertus.spassistent.auth.model;
+package com.alwertus.spassistent.user.model;
 
 import com.google.common.base.Strings;
 import io.jsonwebtoken.Claims;

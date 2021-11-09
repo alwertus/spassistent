@@ -1,4 +1,4 @@
-package com.alwertus.spassistent.auth.model;
+package com.alwertus.spassistent.user.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
