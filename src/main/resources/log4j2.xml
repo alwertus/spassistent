@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration status="WARN">
     <Appenders>
         <Console name="ToConsole" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-5level] %d{HH:mm:ss.SSS} [%c{1}] %msg%n" />
+<!--            <PatternLayout pattern="[%-5level] %d{HH:mm:ss.SSS} [%c{1}] %msg%n" />-->
+<!--
+[%15.15t] - thread
+%c{1} - classname only
+%logger{36} - package+classname
+ -->
+                <PatternLayout pattern=
+"%d{${LOG_DATEFORMAT_PATTERN:-HH:mm:ss.SSS}}
+%highlight{${LOG_LEVEL_PATTERN:-%5p}}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green, DEBUG=blue, TRACE=black}
+%style{%-50.50c{1}>}{cyan}
+%m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
         </Console>
         <File name="ToFile" fileName="logs/application.log" immediateFlush="true" append="false">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
     </Appenders>
     <Loggers>
-        <Root level="info">
+<!--    LEVELS: OFF ALL FATAL ERROR WARN INFO DEBUG TRACE    -->
+        <Root level="TRACE">
             <AppenderRef ref="ToConsole" />
             <AppenderRef ref="ToFile"/>
         </Root>
+        <logger name="org.hibernate" level="WARN"/>
+        <logger name="org.springframework" level="WARN"/>
+        <logger name="_org.springframework.web.servlet" level="WARN"/>
     </Loggers>
 </Configuration>

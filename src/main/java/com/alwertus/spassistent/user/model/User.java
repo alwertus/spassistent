@@ -7,13 +7,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User {
 
     @Id
@@ -32,17 +33,16 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    // return User. Adopt for Spring Security format
-    public UserDetails getSecurityUser() {
-        return new UserDetails() {
-            @Override public Collection<? extends GrantedAuthority> getAuthorities() { return new ArrayList<>(); }
-            @Override public String getUsername() { return login; }
-            @Override public String getPassword() { return password; }
-            @Override public boolean isAccountNonExpired() { return true; }
-            @Override public boolean isAccountNonLocked() { return true; }
-            @Override public boolean isCredentialsNonExpired() { return true; }
-            @Override public boolean isEnabled() { return true; }
-        };
-    }
+    @Column(name = "last_login")
+    private Date lastLogin;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Collection<Role> roles = new ArrayList<>();
+
+    /**
+     * This field value encode and save to password field
+     */
+    @Transient
+    private String newPassword;
 
 }

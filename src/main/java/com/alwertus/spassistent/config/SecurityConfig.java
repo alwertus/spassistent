@@ -1,115 +1,89 @@
 package com.alwertus.spassistent.config;
 
-import com.alwertus.spassistent.user.controller.AuthenticationExceptionHandlerAdvice;
-import com.alwertus.spassistent.user.jwt.JwtRequestFilter;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.alwertus.spassistent.auth.controller.CustomAuthenticationFilter;
+import com.alwertus.spassistent.auth.controller.CustomAuthorizationFilter;
+import com.alwertus.spassistent.auth.model.JwtProperties;
+import com.alwertus.spassistent.auth.service.TokenService;
+import com.alwertus.spassistent.auth.service.UserSecurityService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-@Log4j2
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true) // Ability to give access with annotation @PreAuthorize
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final UserDetailsService userService;
-    private final JwtRequestFilter jwtRequestFilter;
-    private final CorsConfig corsConfig;
 
-    @Autowired
-    public SecurityConfig(UserDetailsService userService, JwtRequestFilter jwtRequestFilter, CorsConfig corsConfig) {
-        this.userService = userService;
-        this.jwtRequestFilter = jwtRequestFilter;
-        this.corsConfig = corsConfig;
-    }
+    private final JwtProperties jwtProperties;
+    private final CorsProperties corsConfig;
+    private final TokenService tokenService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+//        ArrayList<String> noAuthList = new ArrayList<>(List.of(
+        String[] permitUrls = new String[] {
+                "/api/auth/login",
+                "/api/user/register"};
+
+//
+//        ));
+
         http
-                .cors().and()
-                .csrf().disable()
-
+                .cors()
+                .and().csrf().disable()
                 .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // spring security do not use session state
-
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .exceptionHandling()
-                    .authenticationEntryPoint(new AuthenticationExceptionHandlerAdvice())
+                    .addFilter(new CustomAuthenticationFilter("/api/auth/login", authenticationManager(), tokenService))
+                    .addFilterBefore(new CustomAuthorizationFilter(jwtProperties, Arrays.stream(permitUrls).toList()), UsernamePasswordAuthenticationFilter.class);
 
-                .and()
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-
+        http
                 .authorizeRequests()
-
+                .antMatchers( permitUrls).permitAll()
                 .antMatchers(HttpMethod.POST,
-                        "/auth",
-                        "/verify",
-                        "/register",
-                        "/refresh")
-                    .permitAll()
-                .antMatchers(HttpMethod.POST,
-                        "/update-user")
-                    .authenticated()
-                .anyRequest()
-                    .authenticated();
-    }
+                        "/api/user/myInfo")
+                .authenticated()
+                .anyRequest().authenticated();
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(daoAuthenticationProvider());
-    }
-
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Bean
-    protected PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    protected DaoAuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-        daoAuthenticationProvider.setUserDetailsService(userService);
-        return daoAuthenticationProvider;
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
-        if (corsConfig.getOrigins().isEmpty())
-            log.error("Parameter 'application.allowed.origins' is EMPTY");
-
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(Arrays.asList(corsConfig.getOrigins().split(",")));
-        configuration.setAllowedMethods(Arrays.asList(corsConfig.getMethods().split(",")));
-        configuration.setAllowedHeaders(Arrays.asList(corsConfig.getHeaders().split(",")));
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
+        return new CorsConfig(corsConfig);
     }
+
+
+    @Bean
+    protected PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
+/*
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) {
+        auth.authenticationProvider(daoAuthenticationProvider());
+    }*/
+/*
+    @Bean
+    protected DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setUserDetailsService(userSecurityService);
+        return daoAuthenticationProvider;
+    }*/
 }

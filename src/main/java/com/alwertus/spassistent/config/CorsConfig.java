@@ -1,16 +1,26 @@
 package com.alwertus.spassistent.config;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@Component
-@NoArgsConstructor
-@Data
-@ConfigurationProperties(prefix = "application.allowed")
-public class CorsConfig {
-    private String origins = "";
-    private String methods = "GET,POST";
-    private String headers = "Authorization,Cache-Control,Content-Type";
+import java.util.Arrays;
+
+@Log4j2
+//@Component
+public class CorsConfig extends UrlBasedCorsConfigurationSource {
+
+    public CorsConfig(CorsProperties corsConfig) {
+        if (corsConfig.getOrigins().isEmpty())
+            log.error("Parameter 'application.allowed.origins' is EMPTY");
+
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(Arrays.asList(corsConfig.getOrigins().split(",")));
+        configuration.setAllowedMethods(Arrays.asList(corsConfig.getMethods().split(",")));
+        configuration.setAllowedHeaders(Arrays.asList(corsConfig.getHeaders().split(",")));
+
+        this.registerCorsConfiguration("/**", configuration);
+    }
 }
