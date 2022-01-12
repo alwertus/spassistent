@@ -6,7 +6,7 @@ import com.alwertus.spassistent.common.view.ResponseOk;
 import com.alwertus.spassistent.user.model.User;
 import com.alwertus.spassistent.user.service.UserService;
 import com.alwertus.spassistent.user.view.MyInfoResponse;
-import com.alwertus.spassistent.userold.view.UserInfoRequest;
+import com.alwertus.spassistent.user.view.UserInfoRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
