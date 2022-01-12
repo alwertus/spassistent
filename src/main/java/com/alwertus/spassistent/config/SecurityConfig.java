@@ -35,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/api/auth/login",
                 "/api/user/register"};
 
+
         http
                 .cors()
                 .and().csrf().disable()
