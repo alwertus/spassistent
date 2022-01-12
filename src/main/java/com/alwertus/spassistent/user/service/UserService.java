@@ -21,17 +21,6 @@ public class UserService implements IUserService {
     @Override
     public void saveUser(User user) throws BadCredentialsException {
         log.info("Save user '{}' to DB", user.getLogin());
-        /*log.info("Create new User: " + login + ":" + password);
-
-        try {
-            userRepo
-                    .findByLogin(login)
-                    .orElseThrow(() -> new UsernameNotFoundException("Login " + login + "not found"));
-            throw new BadCredentialsException("User already exists");
-        } catch (UsernameNotFoundException ignored) {}
-
-        User user = new User();
-        user.setLogin(login);*/
         if (user.getNewPassword() != null) {
             user.setPassword(passwordEncoder.encode(user.getNewPassword()));
             user.setNewPassword(null);

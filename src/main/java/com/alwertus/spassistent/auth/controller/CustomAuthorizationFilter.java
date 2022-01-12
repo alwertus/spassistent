@@ -32,11 +32,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     private final JwtProperties jwtProperties;
     private final List<String> noAuthList;
 
-    /*private final ArrayList<String> noAuthList = new ArrayList<>(List.of(
-            "/api/auth/login",
-            "/api/user/register"
-    ));*/
-
     @Override
     protected void doFilterInternal(HttpServletRequest rq, @NonNull HttpServletResponse rs, @NonNull FilterChain filterChain) throws ServletException, IOException {
         if (noAuthList.contains(rq.getServletPath())) {

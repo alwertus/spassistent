@@ -22,11 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
-    /* this is example text response
-    public ResponseEntity<?> someMethod(@RequestBody UserInfoRequest rq) {
-        return ResponseEntity.ok("TEXT_MESSAGE");
-    }*/
-
     @PostMapping(value = "/update")
     public ResponseOk updateUser(@RequestBody UserInfoRequest rq) {
         log.info("Update user info: " + rq);

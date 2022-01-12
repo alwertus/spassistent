@@ -1,14 +1,12 @@
 package com.alwertus.spassistent.config;
 
 import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
 @Log4j2
-//@Component
 public class CorsConfig extends UrlBasedCorsConfigurationSource {
 
     public CorsConfig(CorsProperties corsConfig) {
