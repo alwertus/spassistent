@@ -20,25 +20,30 @@ public class TokenService {
     private final JwtProperties jwtProperties;
 
     public String generateToken(String userName, String issuer, Collection<GrantedAuthority> userAuthorities, boolean isRefreshToken) {
-        log.trace(String.format("Generate token with parameters: userName='%s', issuer='%s', isRefreshToken='%s'", userName, issuer, isRefreshToken));
 
-        log.debug("-1");
-        Date expireDate = new Date(System.currentTimeMillis() + (long) (isRefreshToken ? 100 : 1) * jwtProperties.getTokenExpiration() * 60 * 1000);
-        log.debug("-2");
-        List<String> claim = userAuthorities.stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-        log.debug("-3");
+        StringBuilder sb = new StringBuilder(String.format("Generate token with parameters: userName='%s', issuer='%s', isRefreshToken='%s' =>", userName, issuer, isRefreshToken));
+        try {
+            Date expireDate = new Date(System.currentTimeMillis() + (long) (isRefreshToken ? 100 : 1) * jwtProperties.getTokenExpiration() * 60 * 1000);
+            log.debug("-2");
+            List<String> claim = userAuthorities.stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
+            log.debug("-3");
+            String token = jwtProperties.getTokenPrefix() +
+                    JWT.create()
+                            .withSubject(userName)
+                            .withExpiresAt(expireDate)
+                            .withIssuer(issuer)
+                            .withClaim("roles", claim)
+                            .sign(jwtProperties.getAlgorithm());
+            sb.append("Success: ").append(token);
+            return token;
+        } catch (Exception e) {
+            sb.append("Error: ").append(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            log.trace(sb);
+        }
 
-        String result = jwtProperties.getTokenPrefix() +
-                JWT.create()
-                .withSubject(userName)
-                .withExpiresAt(expireDate)
-                .withIssuer(issuer)
-                .withClaim("roles", claim)
-                .sign(jwtProperties.getAlgorithm());
-
-        log.debug("-4");
-        return result;
     }
 }
