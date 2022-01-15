@@ -20,8 +20,7 @@ public class TokenService {
     private final JwtProperties jwtProperties;
 
     public String generateToken(String userName, String issuer, Collection<GrantedAuthority> userAuthorities, boolean isRefreshToken) {
-
-        StringBuilder sb = new StringBuilder(String.format("Generate token with parameters: userName='%s', issuer='%s', isRefreshToken='%s' =>", userName, issuer, isRefreshToken));
+        StringBuilder sb = new StringBuilder(String.format("Generate token with parameters: userName='%s', issuer='%s', isRefreshToken='%s' => ", userName, issuer, isRefreshToken));
         try {
             Date expireDate = new Date(System.currentTimeMillis() + (long) (isRefreshToken ? 100 : 1) * jwtProperties.getTokenExpiration() * 60 * 1000);
             List<String> claim = userAuthorities.stream()
@@ -34,13 +33,11 @@ public class TokenService {
                             .withIssuer(issuer)
                             .withClaim("roles", claim)
                             .sign(jwtProperties.getAlgorithm());
-            sb.append("Success: ").append(token);
+            log.trace(sb.append("Success"));
             return token;
         } catch (Exception e) {
-            sb.append("Error: ").append(e.getMessage());
+            log.error(sb.append("Error: ").append(e.getMessage()));
             throw new RuntimeException(e.getMessage());
-        } finally {
-            log.trace(sb);
         }
     }
 }
