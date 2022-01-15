@@ -74,15 +74,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authResult) throws IOException {
-        log.debug("1");
         User user = (User) authResult.getPrincipal();
-        log.debug("2");
         String accessToken = tokenService.generateToken(user.getUsername(), request.getRequestURL().toString(), user.getAuthorities(), false);
-        log.debug("3");
         String refreshToken = tokenService.generateToken(user.getUsername(), request.getRequestURL().toString(), user.getAuthorities(), true);
-        log.debug("4");
         response.setContentType(APPLICATION_JSON_VALUE);
-        log.debug("5");
         new ObjectMapper().writeValue(response.getOutputStream(), new AuthenticationResponseOk(accessToken, refreshToken));
     }
 

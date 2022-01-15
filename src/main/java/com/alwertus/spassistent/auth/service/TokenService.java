@@ -24,11 +24,9 @@ public class TokenService {
         StringBuilder sb = new StringBuilder(String.format("Generate token with parameters: userName='%s', issuer='%s', isRefreshToken='%s' =>", userName, issuer, isRefreshToken));
         try {
             Date expireDate = new Date(System.currentTimeMillis() + (long) (isRefreshToken ? 100 : 1) * jwtProperties.getTokenExpiration() * 60 * 1000);
-            log.debug("-2");
             List<String> claim = userAuthorities.stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList());
-            log.debug("-3");
             String token = jwtProperties.getTokenPrefix() +
                     JWT.create()
                             .withSubject(userName)
@@ -44,6 +42,5 @@ public class TokenService {
         } finally {
             log.trace(sb);
         }
-
     }
 }
