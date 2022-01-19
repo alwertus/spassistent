@@ -10,6 +10,6 @@ public class App {
 
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
-        log.info("Server started !!! 1");
+        log.info("Server started !!!");
     }
 }
