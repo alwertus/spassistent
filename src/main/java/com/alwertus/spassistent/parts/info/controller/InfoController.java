@@ -3,8 +3,10 @@ package com.alwertus.spassistent.parts.info.controller;
 import com.alwertus.spassistent.common.view.Response;
 import com.alwertus.spassistent.common.view.ResponseError;
 import com.alwertus.spassistent.common.view.ResponseOk;
+import com.alwertus.spassistent.parts.info.model.InfoUserOptions;
 import com.alwertus.spassistent.parts.info.service.IInfoService;
 import com.alwertus.spassistent.parts.info.view.CreateSpaceRequest;
+import com.alwertus.spassistent.parts.info.view.SelectSpaceRequest;
 import com.alwertus.spassistent.parts.info.view.SpaceResponse;
 import com.alwertus.spassistent.parts.info.view.SpacesListResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -26,11 +29,18 @@ public class InfoController {
     @PostMapping("/getSpaces")
     public SpacesListResponse getSpaces() {
         log.info("Get spaces");
-        return new SpacesListResponse(infoService
+
+        List<SpaceResponse> spaces = infoService
                 .getSpaces()
                 .stream().map(SpaceResponse::new)
-                .collect(Collectors.toList())
-        );
+                .collect(Collectors.toList());
+
+        InfoUserOptions userOptions = infoService.getInfoUserOptions();
+        Long selectedSpace = null;
+        if (userOptions != null)
+            selectedSpace = userOptions.getSelectedSpace().getId();
+
+        return new SpacesListResponse(spaces, selectedSpace);
     }
 
     @PostMapping("/createSpace")
@@ -38,6 +48,17 @@ public class InfoController {
         log.info("Create new Space");
         try {
             infoService.createSpace(rq);
+            return new ResponseOk();
+        } catch (Exception e) {
+            return new ResponseError(e.getMessage());
+        }
+    }
+
+    @PostMapping("/selectSpace")
+    public Response selectSpace(@RequestBody SelectSpaceRequest rq) {
+        log.info("Select InfoSpace id=" + rq.getSpaceId());
+        try {
+            infoService.selectSpace(rq.getSpaceId());
             return new ResponseOk();
         } catch (Exception e) {
             return new ResponseError(e.getMessage());
