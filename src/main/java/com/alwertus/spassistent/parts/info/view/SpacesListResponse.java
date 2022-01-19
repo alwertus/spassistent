@@ -15,8 +15,4 @@ public class SpacesListResponse extends ResponseOk {
     @Getter
     private final Long selectedSpace;
 
-//    public SpacesListResponse(List<SpaceResponse> spaces) {
-//        this.spaces = spaces;
-//    }
-
 }
