@@ -10,21 +10,23 @@ import com.alwertus.spassistent.parts.info.view.CreateSpaceRequest;
 import com.alwertus.spassistent.user.model.User;
 import com.alwertus.spassistent.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Log4j2
 @RequiredArgsConstructor
 @Service
-public class InfoService implements IInfoService {
+public class InfoService {
     private final UserService userService;
     private final SpaceRepository spaceRepository;
     private final SpaceAccessRepository spaceAccessRepository;
     private final InfoUserOptionsRepository infoUserOptionsRepository;
 
-    @Override
     public List<Space> getSpaces() {
         User user = userService.getCurrentUser();
         return spaceAccessRepository
@@ -34,7 +36,6 @@ public class InfoService implements IInfoService {
                 .collect(Collectors.toList());
     }
 
-    @Override
     public void createSpace(CreateSpaceRequest rq) {
         User currentUser = userService.getCurrentUser();
         Space space = new Space();
@@ -51,19 +52,35 @@ public class InfoService implements IInfoService {
         spaceAccessRepository.save(spaceAccess);
     }
 
-    @Override
     public InfoUserOptions getInfoUserOptions() {
-        return infoUserOptionsRepository.findByUser(userService.getCurrentUser()).orElse(null);
+        User currentUser = userService.getCurrentUser();
+
+        Optional<InfoUserOptions> options = infoUserOptionsRepository
+                .findByUser(currentUser);
+
+        if (options.isEmpty()) {
+            log.trace("UserOptions is null. Create new!");
+            InfoUserOptions userOptions = new InfoUserOptions();
+            userOptions.setUser(currentUser);
+            infoUserOptionsRepository.save(userOptions);
+            return userOptions;
+        }
+
+        return options.get();
     }
 
-    @Override
+    public Space getCurrentSpace() {
+        return getInfoUserOptions().getSelectedSpace();
+    }
+
     public void selectSpace(Long id) {
         Space space = spaceRepository
                 .findById(id)
                 .orElseThrow(() -> new RuntimeException(String.format("Space '%s' not found", id)));
-        User currentUser = userService.getCurrentUser();
+        /*User currentUser = userService.getCurrentUser();
         InfoUserOptions userOptions = infoUserOptionsRepository.findByUser(currentUser).orElse(new InfoUserOptions());
-        userOptions.setUser(currentUser);
+        userOptions.setUser(currentUser);*/
+        InfoUserOptions userOptions = getInfoUserOptions();
         userOptions.setSelectedSpace(space);
         infoUserOptionsRepository.save(userOptions);
     }

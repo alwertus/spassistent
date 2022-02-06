@@ -1,9 +1,9 @@
 package com.alwertus.spassistent.parts.info.model;
 
-import com.alwertus.spassistent.user.model.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -12,24 +12,29 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "info_space")
-public class Space {
+@Table(name = "info_page")
+public class Page {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name="space_id")
+    private Space space;
+
     @Column(name = "title")
     private String title;
 
-    @Column(name = "descr")
-    private String description;
+    @ManyToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name="parent_id")
+    private Page parent;
 
     @Column(name = "created")
+    @CreationTimestamp
     private Date created;
 
-    @ManyToOne(cascade = CascadeType.DETACH)
-    @JoinColumn(name = "create_by")
-    private User createdBy;
-
+    @Lob
+    @Column(name = "html")
+    private String html;
 }

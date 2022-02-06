@@ -14,11 +14,10 @@ import org.springframework.stereotype.Service;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class UserService implements IUserService {
+public class UserService {
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
     public void saveUser(User user) throws BadCredentialsException {
         log.info("Save user '{}' to DB", user.getLogin());
         if (user.getNewPassword() != null) {
@@ -29,14 +28,12 @@ public class UserService implements IUserService {
         userRepo.save(user);
     }
 
-    @Override
     public User getUser(String login) {
         log.debug("Fetching user '{}'", login);
         return userRepo.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException("User doesn't exists"));
     }
 
-    @Override
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return getUser(authentication.getName());

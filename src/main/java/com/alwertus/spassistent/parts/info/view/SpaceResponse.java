@@ -8,6 +8,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class SpaceResponse {
     private final Space space;
+
     public Long getId() { return space.getId(); }
 
     public String getTitle() {

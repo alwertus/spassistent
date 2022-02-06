@@ -22,7 +22,6 @@ public class InfoUserOptions {
     @JoinColumn(name = "user")
     private User user;
 
-//    @Column(name = "selected_space")
     @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name="selected_space")
     private Space selectedSpace;
