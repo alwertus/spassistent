@@ -1,18 +1,20 @@
-package com.alwertus.spassistent.parts.info.view;
+package com.alwertus.spassistent.parts.info.view.response;
 
 import com.alwertus.spassistent.common.view.ResponseOk;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-public class SpacesListResponse extends ResponseOk {
+public class SpacesListRs extends ResponseOk {
 
     @Getter
-    private final List<SpaceResponse> spaces;
+    private final List<SpaceRs> spaces;
 
     @Getter
+    @Nullable
     private final Long selectedSpace;
 
 }

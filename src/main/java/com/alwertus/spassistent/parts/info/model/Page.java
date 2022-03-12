@@ -1,8 +1,10 @@
 package com.alwertus.spassistent.parts.info.model;
 
+import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -33,6 +35,10 @@ public class Page {
     @Column(name = "created")
     @CreationTimestamp
     private Date created;
+
+    @ColumnDefault("0")
+    @Column(name = "position")
+    private Integer position;
 
     @Lob
     @Column(name = "html")

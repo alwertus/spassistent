@@ -1,4 +1,4 @@
-package com.alwertus.spassistent.parts.info.view;
+package com.alwertus.spassistent.parts.info.view.response;
 
 import com.alwertus.spassistent.common.view.ResponseOk;
 import lombok.Getter;
@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class PagesListResponse extends ResponseOk {
+public class PagesListRs extends ResponseOk {
 
     @Getter
-    private final List<PageResponse> pages;
+    private final List<PageRs> pages;
 }

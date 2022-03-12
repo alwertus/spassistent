@@ -27,5 +27,6 @@ public class SpaceAccess {
     private User user;
 
     @Column(name = "access")
-    private String access;
+    @Enumerated(EnumType.STRING)
+    private SpaceAccessEnum access;
 }

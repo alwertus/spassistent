@@ -19,7 +19,7 @@ public class InfoUserOptions {
     private Long id;
 
     @OneToOne(cascade = CascadeType.DETACH)
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user", unique = true)
     private User user;
 
     @ManyToOne(cascade = CascadeType.DETACH)

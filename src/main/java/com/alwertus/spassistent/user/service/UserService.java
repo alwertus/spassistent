@@ -29,9 +29,13 @@ public class UserService {
     }
 
     public User getUser(String login) {
-        log.debug("Fetching user '{}'", login);
         return userRepo.findByLogin(login)
-                .orElseThrow(() -> new UsernameNotFoundException("User doesn't exists"));
+                .orElseThrow(() -> new UsernameNotFoundException("User with login='" + login + "' doesn't exists"));
+    }
+
+    public User getUser(Long id) {
+        return userRepo.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found. id='" + id + "'"));
     }
 
     public User getCurrentUser() {

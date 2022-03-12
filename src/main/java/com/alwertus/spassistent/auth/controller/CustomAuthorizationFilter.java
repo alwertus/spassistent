@@ -34,37 +34,49 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest rq, @NonNull HttpServletResponse rs, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        StringBuilder sLog = new StringBuilder();
         if (noAuthList.contains(rq.getServletPath())) {
             log.info("Skip authorization with token");
             filterChain.doFilter(rq, rs);
         } else {
-            log.trace("Try to authorization with token");
+            sLog.append("Try to authorization with token => ");
             String authorizationHeader = rq.getHeader(HttpHeaders.AUTHORIZATION);
             if (authorizationHeader != null && authorizationHeader.startsWith(jwtProperties.getTokenPrefix())) {
                 try {
+                    sLog.append("token => ");
                     String token = authorizationHeader.substring(jwtProperties.getTokenPrefix().length());
+                    sLog.append("verifier => ");
                     JWTVerifier verifier = JWT.require(jwtProperties.getAlgorithm()).build();
+                    sLog.append("decode => ");
                     DecodedJWT decodedJWT = verifier.verify(token);
                     String username = decodedJWT.getSubject();
                     String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
                     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                    sLog.append("foreach => ");
                     stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
+                    sLog.append("newToken => ");
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(username, null, authorities);
+                    sLog.append("set Auth => ");
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    sLog.append("END >> Next Filter.");
+                    log.trace(sLog);
                     filterChain.doFilter(rq, rs);
                 } catch (Exception e) {
-                    log.error("Error login in: {}", e.getMessage());
-                    rs.setStatus(UNAUTHORIZED.value());
+                    sLog.append("Error login in: ").append(e.getMessage());
+                    log.error(sLog);
 
+                    rs.setStatus(UNAUTHORIZED.value());
                     rs.setContentType(APPLICATION_JSON_VALUE);
                     new ObjectMapper().writeValue(rs.getOutputStream(), new ResponseError(e.getMessage()));
                 }
 
             } else {
-                log.error(authorizationHeader == null
+                sLog.append(authorizationHeader == null
                         ? "Empty Authorization header"
                         : "Authorization header not start with '" + jwtProperties.getTokenPrefix() + "'");
+                log.error(sLog);
+
                 filterChain.doFilter(rq, rs);
             }
         }

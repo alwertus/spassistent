@@ -29,7 +29,16 @@ public class Space {
     private Date created;
 
     @ManyToOne(cascade = CascadeType.DETACH)
-    @JoinColumn(name = "create_by")
+    @JoinColumn(name = "created_by")
     private User createdBy;
 
+    @Override
+    public String toString() {
+        return "Space{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", created=" + created +
+                '}';
+    }
 }

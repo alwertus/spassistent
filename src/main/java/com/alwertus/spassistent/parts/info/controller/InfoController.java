@@ -3,19 +3,18 @@ package com.alwertus.spassistent.parts.info.controller;
 import com.alwertus.spassistent.common.view.Response;
 import com.alwertus.spassistent.common.view.ResponseError;
 import com.alwertus.spassistent.common.view.ResponseOk;
-import com.alwertus.spassistent.parts.info.model.InfoUserOptions;
 import com.alwertus.spassistent.parts.info.model.Page;
-import com.alwertus.spassistent.parts.info.service.InfoService;
+import com.alwertus.spassistent.parts.info.model.Space;
+import com.alwertus.spassistent.parts.info.service.SpaceService;
 import com.alwertus.spassistent.parts.info.service.PageService;
-import com.alwertus.spassistent.parts.info.view.*;
+import com.alwertus.spassistent.parts.info.view.request.*;
+import com.alwertus.spassistent.parts.info.view.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -23,91 +22,126 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/info")
 public class InfoController {
-    private final InfoService infoService;
+    private final SpaceService spaceService;
     private final PageService pageService;
 
     @PostMapping("/getSpaces")
-    public SpacesListResponse getSpaces() {
+    public Response getSpaces() {
         log.info("Get spaces");
 
-        List<SpaceResponse> spaces = infoService
+        List<SpaceRs> spaces = spaceService
                 .getSpaces()
-                .stream().map(SpaceResponse::new)
+                .stream().map(SpaceRs::new)
                 .collect(Collectors.toList());
 
-//        InfoUserOptions userOptions = infoService.getInfoUserOptions();
-//        Long selectedSpace = null;
-//        if (userOptions != null)
-//            selectedSpace = userOptions.getSelectedSpace().getId();
-
-        return new SpacesListResponse(spaces,
-                infoService
+        Space selectedSpace = spaceService
                 .getInfoUserOptions()
-                .getSelectedSpace()
-                .getId());
+                .getSelectedSpace();
+
+        return new SpacesListRs(
+                spaces,
+                selectedSpace == null ? null : selectedSpace.getId()
+        );
     }
 
     @PostMapping("/createSpace")
-    public Response createSpace(@RequestBody CreateSpaceRequest rq) {
+    public Response createSpace(@RequestBody CreateSpaceRq rq) {
         log.info("Create new Space");
-        try {
-            infoService.createSpace(rq);
-            return new ResponseOk();
-        } catch (Exception e) {
-            return new ResponseError(e.getMessage());
-        }
+        spaceService.createSpace(rq);
+        return new ResponseOk();
+    }
+
+    @PostMapping("/getCurrentSpaceInfo")
+    public Response getCurrentSpaceInfo() {
+        Optional<Space> space = spaceService.getCurrentSpace();
+        if (space.isEmpty())
+            throw new RuntimeException("Space is not determine");
+        return new GetCurrentSpaceInfoRs(space.get(), spaceService.getAccessList(space.get()), spaceService.isCurrentUserCanWrite());
+    }
+
+    @PostMapping("/changeSpaceInfo")
+    public Response changeSpaceInfo(@RequestBody ChangeSpaceInfoRq rq) {
+        if (rq.getField() == null || rq.getField().isEmpty())
+            throw new RuntimeException("Request 'field' is null");
+        spaceService.changeField(rq.getField(), rq.getNewValue());
+        return new ResponseOk();
     }
 
     @PostMapping("/selectSpace")
-    public Response selectSpace(@RequestBody SelectSpaceRequest rq) {
+    public Response selectSpace(@RequestBody SelectSpaceRq rq) {
         log.info("Select InfoSpace id=" + rq.getSpaceId());
-        try {
-            infoService.selectSpace(rq.getSpaceId());
-            return new ResponseOk();
-        } catch (Exception e) {
-            return new ResponseError(e.getMessage());
-        }
+        spaceService.selectSpace(rq.getSpaceId());
+        return new ResponseOk();
+    }
+
+    @PostMapping("/addUserToSpace")
+    public Response addLoginToSpace(@RequestBody AddLoginToSpaceRq rq) {
+        spaceService.addUserToCurrentSpace(rq.getLogin());
+        return new ResponseOk();
+    }
+    @PostMapping("/changeUserAccess")
+    public Response changeUserAccess(@RequestBody ChangeUserAccessRq rq) {
+        log.info("Change user access to: " + rq);
+        spaceService.changeUserAccess(rq.getUserId(), rq.getNewAccess());
+        return new ResponseOk();
     }
 
     @PostMapping("/createPage")
-    public Response createPage(@RequestBody CreatePageRequest rq) {
+    public Response createPage(@RequestBody CreatePageRq rq) {
         log.info("Create page title=" + rq.getTitle());
-        try {
-            pageService.createPage(rq.getParentId(), rq.getTitle());
+        pageService.createPage(rq.getParentId(), rq.getTitle());
+        return new ResponseOk();
+    }
+    @PostMapping("/movePage")
+    public Response movePage(@RequestBody MovePageRq rq) {
+        if (rq.getFrom() == null)
+            return new ResponseError("From is null");
 
-            return new ResponseOk();
-        } catch (Exception e) {
-            return new ResponseError(e.getMessage());
-        }
+        log.info("Move page id=" + rq.getFrom() + " to new parent id=" + (rq.getTo() == null ? "null" : rq.getTo()));
+        pageService.movePage(rq.getFrom(), rq.getTo());
+        return new ResponseOk();
+    }
+
+    @PostMapping("/renamePage")
+    public Response renamePage(@RequestBody RenamePageRq rq) {
+        log.info("Rename page id=" + rq.getId() + " newTitle=" + rq.getNewTitle());
+        pageService.renamePage(rq.getId(), rq.getNewTitle());
+        return new ResponseOk();
     }
 
     @PostMapping("/getPageList")
-    public PagesListResponse getPageList() {
-        return new PagesListResponse(
-                pageService
-                        .getAvaliablePages()
-                        .stream()
-                        .map(PageResponse::new)
-                        .collect(Collectors.toList()));
+    public Response getPageList() {
+        log.info("GetPageList");
+        List<Page> availablePages = pageService.getAvailablePages();
+        return new PagesListRs(getChildRecursive(null, availablePages));
+    }
+
+    private List<PageRs> getChildRecursive(Long parentId, List<Page> findList) {
+       return findList.stream()
+                .filter(e -> e.getParent() == null ? parentId == null : e.getParent().getId().equals(parentId))
+                .map(e -> {
+                    PageRs pr = new PageRs(e);
+                    pr.setChildList(getChildRecursive(e.getId(), findList));
+                    return pr;
+                })
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/getHtml")
-    public Response getHtml(@RequestBody GetHtmlRequest rq) {
-        try {
-            return new HtmlResponse(pageService.getHtml(rq.getId()));
-        } catch (Exception e) {
-            return new ResponseError(e.getMessage());
-        }
+    public Response getHtml(@RequestBody GetPageRq rq) {
+        return new GetPageRs(pageService.getPage(rq.getId()));
     }
 
     @PostMapping("/saveHtml")
-    public Response saveHtml(@RequestBody SaveHtmlRequest rq) {
-        try {
-            pageService.saveHtml(rq.getId(), rq.getHtml());
-            return new ResponseOk();
-        } catch (Exception e) {
-            return new ResponseError(e.getMessage());
-        }
+    public Response saveHtml(@RequestBody SaveHtmlRq rq) {
+        pageService.saveHtml(rq.getId(), rq.getHtml());
+        return new ResponseOk();
+    }
+
+    @ExceptionHandler(Exception.class)
+    public Response errorHandler(Exception e) {
+        log.error("ErrorHandler: " + e.getMessage());
+        return new ResponseError(e.getMessage());
     }
 
 }

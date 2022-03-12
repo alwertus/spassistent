@@ -1,12 +1,13 @@
-package com.alwertus.spassistent.parts.info.view;
+package com.alwertus.spassistent.parts.info.view.response;
 
 import com.alwertus.spassistent.parts.info.model.Space;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Date;
 
+@SuppressWarnings("unused")
 @RequiredArgsConstructor
-public class SpaceResponse {
+public class SpaceRs {
     private final Space space;
 
     public Long getId() { return space.getId(); }
