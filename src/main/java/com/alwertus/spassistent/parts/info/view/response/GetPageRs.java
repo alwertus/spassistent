@@ -16,4 +16,6 @@ public class GetPageRs extends ResponseOk {
     public String getTitle() {
         return page.getTitle();
     }
+
+    public Boolean getIsFavorite() { return page.getIsFavorite() != null && page.getIsFavorite(); }
 }

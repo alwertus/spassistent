@@ -20,7 +20,7 @@
     </Appenders>
     <Loggers>
 <!--    LEVELS: OFF ALL FATAL ERROR WARN INFO DEBUG TRACE    -->
-        <Root level="TRACE">
+        <Root level="DEBUG">
             <AppenderRef ref="ToConsole" />
             <AppenderRef ref="ToFile"/>
         </Root>

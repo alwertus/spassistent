@@ -26,6 +26,8 @@ public class PageRs {
 
     public Integer getPosition() { return page.getPosition(); }
 
+    public Boolean getIsFavorite() { return page.getIsFavorite() != null && page.getIsFavorite(); }
+
     public Long getParentId() {
         if (page.getParent() == null)
             return null;

@@ -40,6 +40,9 @@ public class Page {
     @Column(name = "position")
     private Integer position;
 
+    @Column(name = "favorite")
+    private Boolean isFavorite;
+
     @Lob
     @Column(name = "html")
     private String html;
