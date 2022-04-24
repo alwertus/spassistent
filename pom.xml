@@ -33,6 +33,16 @@
 			</exclusions>
 		</dependency>
 
+		<!--	for email sending	-->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 		<!-- Error solution: spring boot configuration annotation processor not configured -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
