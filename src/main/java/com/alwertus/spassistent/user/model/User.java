@@ -22,7 +22,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "login")
+    @Column(name = "login", unique = true)
     private String login;
 
     @Column(name = "password")
@@ -34,14 +34,20 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "created")
+    private Date created;
+
     @Column(name = "last_login")
     private Date lastLogin;
+
+    @Column(name = "email_confirm_string")
+    private String emailConfirmString;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
 
     /**
-     * This field value encode and save to password field
+     * This field value encode and save into password field
      */
     @Transient
     private String newPassword;

@@ -33,7 +33,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         String[] permitUrls = new String[] {
                 "/api/auth/login",
-                "/api/user/register"};
+                "/api/user/register",
+                "/api/user/emailConfirm",
+        };
 
 
         http
@@ -60,7 +62,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     CorsConfigurationSource corsConfigurationSource() {
         return new CorsConfig(corsConfig);
     }
-
 
     @Bean
     protected PasswordEncoder passwordEncoder() {

@@ -5,11 +5,11 @@ import com.alwertus.spassistent.common.view.ResponseError;
 import com.alwertus.spassistent.common.view.ResponseOk;
 import com.alwertus.spassistent.user.model.User;
 import com.alwertus.spassistent.user.service.UserService;
+import com.alwertus.spassistent.user.view.EmailConfirmRequest;
 import com.alwertus.spassistent.user.view.MyInfoResponse;
 import com.alwertus.spassistent.user.view.UserInfoRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,27 +40,29 @@ public class UserController {
     public Response createUser(@RequestBody UserInfoRequest rq) {
         log.info("Create new user: " + rq);
 
-        if (rq.getLogin() == null || rq.getPassword() == null)
-            return new ResponseError("Login or Password cannot be empty");
-
-        User user = new User();
         try {
-            userService.getUser(rq.getLogin());
-            return new ResponseError(String.format("User with login '%s' already exists", rq.getLogin()));
-        } catch (UsernameNotFoundException ignored) {
-
+            userService.createUser(rq.getLogin(), rq.getPassword());
+        } catch (Exception e) {
+            return new ResponseError(e.getMessage());
         }
-
-        user.setLogin(rq.getLogin());
-        user.setNewPassword(rq.getPassword());
-        userService.saveUser(user);
 
         return new ResponseOk();
     }
 
-    @PostMapping(value = "myInfo")
+    @PostMapping(value = "/myInfo")
     public MyInfoResponse getMyInfo() {
         return new MyInfoResponse(userService.getCurrentUser());
+    }
+
+    @PostMapping(value = "/emailConfirm")
+    public Response emailConfirm(@RequestBody EmailConfirmRequest rq) {
+        log.info("Try to confirm email with string: " + rq.getConfirmString());
+        try {
+            userService.confirmEmail(rq.getConfirmString());
+        } catch (Exception e) {
+            return new ResponseError(e.getMessage());
+        }
+        return new ResponseOk();
     }
 
 }

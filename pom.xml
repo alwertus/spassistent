@@ -131,6 +131,7 @@
 			<version>31.1-jre</version>
 		</dependency>
 
+		<!--	fix plugin not found	-->
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-compiler-plugin</artifactId>
