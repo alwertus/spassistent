@@ -1,0 +1,1 @@
+[пример CRUD с Spring MVC RESTful Web Service](https://betacode.net/10865/simple-crud-example-with-spring-mvc-restful-web-service)
