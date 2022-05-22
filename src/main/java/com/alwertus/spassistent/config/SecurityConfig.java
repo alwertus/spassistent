@@ -49,11 +49,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers( permitUrls).permitAll()
+                .antMatchers(permitUrls).permitAll()
                 .antMatchers(HttpMethod.POST,
                         "/api/user/myInfo",
                         "/api/info/*")
-                .authenticated()
+                    .authenticated()
                 .anyRequest().authenticated();
 
     }

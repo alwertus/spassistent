@@ -1,18 +1,24 @@
 package com.alwertus.spassistent.parts.info.controller;
 
+import com.alwertus.spassistent.common.service.FileService;
 import com.alwertus.spassistent.common.view.Response;
 import com.alwertus.spassistent.common.view.ResponseError;
 import com.alwertus.spassistent.common.view.ResponseOk;
 import com.alwertus.spassistent.parts.info.model.Page;
 import com.alwertus.spassistent.parts.info.model.Space;
-import com.alwertus.spassistent.parts.info.service.SpaceService;
 import com.alwertus.spassistent.parts.info.service.PageService;
+import com.alwertus.spassistent.parts.info.service.SpaceService;
 import com.alwertus.spassistent.parts.info.view.request.*;
 import com.alwertus.spassistent.parts.info.view.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,6 +30,7 @@ import java.util.stream.Collectors;
 public class InfoController {
     private final SpaceService spaceService;
     private final PageService pageService;
+    private final FileService fileService;
 
     @PostMapping("/getSpaces")
     public Response getSpaces() {
@@ -137,6 +144,24 @@ public class InfoController {
         pageService.saveHtml(rq.getId(), rq.getHtml());
         return new ResponseOk();
     }
+
+    @PostMapping("/uploadImage")
+    public Response uploadImage(@RequestBody UploadImageRq rq) {
+        log.info("Upload image");
+
+        return new UploadImageRs(fileService.saveFile(rq.getPageId(), rq.getBase64content(), rq.getExtension()));
+    }
+
+    /*@GetMapping("/getImage/{fileName:.+}")
+    public ResponseEntity<Resource> getImage(@PathVariable String fileName, HttpServletRequest rq) {
+        // load file as Resource
+        Resource resource = fileService.getFile(fileName);
+        String contentType = "application/octet-stream";
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }*/
 
     @ExceptionHandler(Exception.class)
     public Response errorHandler(Exception e) {
