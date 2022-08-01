@@ -7,7 +7,7 @@ import com.alwertus.spassistent.parts.info.model.SpaceAccess;
 import com.alwertus.spassistent.parts.info.repo.InfoUserOptionsRepository;
 import com.alwertus.spassistent.parts.info.repo.SpaceAccessRepository;
 import com.alwertus.spassistent.parts.info.repo.SpaceRepository;
-import com.alwertus.spassistent.parts.info.view.request.CreateSpaceRq;
+import com.alwertus.spassistent.parts.info.dto.request.CreateSpaceRq;
 import com.alwertus.spassistent.user.model.User;
 import com.alwertus.spassistent.user.service.UserService;
 import lombok.RequiredArgsConstructor;

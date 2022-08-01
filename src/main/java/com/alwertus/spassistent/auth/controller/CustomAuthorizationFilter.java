@@ -1,7 +1,7 @@
 package com.alwertus.spassistent.auth.controller;
 
 import com.alwertus.spassistent.auth.model.JwtProperties;
-import com.alwertus.spassistent.common.view.ResponseError;
+import com.alwertus.spassistent.common.dto.ResponseError;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.interfaces.DecodedJWT;

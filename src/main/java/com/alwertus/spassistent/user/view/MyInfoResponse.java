@@ -1,6 +1,6 @@
 package com.alwertus.spassistent.user.view;
 
-import com.alwertus.spassistent.common.view.ResponseOk;
+import com.alwertus.spassistent.common.dto.ResponseOk;
 import com.alwertus.spassistent.user.model.User;
 
 @SuppressWarnings("unused")

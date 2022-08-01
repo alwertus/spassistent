@@ -1,6 +1,6 @@
 package com.alwertus.spassistent.auth.view;
 
-import com.alwertus.spassistent.common.view.ResponseOk;
+import com.alwertus.spassistent.common.dto.ResponseOk;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

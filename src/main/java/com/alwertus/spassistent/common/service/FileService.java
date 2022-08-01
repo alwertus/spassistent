@@ -1,6 +1,5 @@
 package com.alwertus.spassistent.common.service;
 
-import com.alwertus.spassistent.common.view.ResponseError;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;

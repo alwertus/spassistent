@@ -1,6 +1,5 @@
 package com.alwertus.spassistent.parts.info.model;
 
-import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

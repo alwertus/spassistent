@@ -1,15 +1,15 @@
 package com.alwertus.spassistent.parts.info.controller;
 
 import com.alwertus.spassistent.common.service.FileService;
-import com.alwertus.spassistent.common.view.Response;
-import com.alwertus.spassistent.common.view.ResponseError;
-import com.alwertus.spassistent.common.view.ResponseOk;
+import com.alwertus.spassistent.common.dto.Response;
+import com.alwertus.spassistent.common.dto.ResponseError;
+import com.alwertus.spassistent.common.dto.ResponseOk;
 import com.alwertus.spassistent.parts.info.model.Page;
 import com.alwertus.spassistent.parts.info.model.Space;
 import com.alwertus.spassistent.parts.info.service.PageService;
 import com.alwertus.spassistent.parts.info.service.SpaceService;
-import com.alwertus.spassistent.parts.info.view.request.*;
-import com.alwertus.spassistent.parts.info.view.response.*;
+import com.alwertus.spassistent.parts.info.dto.request.*;
+import com.alwertus.spassistent.parts.info.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;

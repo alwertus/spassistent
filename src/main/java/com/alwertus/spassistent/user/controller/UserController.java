@@ -1,8 +1,8 @@
 package com.alwertus.spassistent.user.controller;
 
-import com.alwertus.spassistent.common.view.Response;
-import com.alwertus.spassistent.common.view.ResponseError;
-import com.alwertus.spassistent.common.view.ResponseOk;
+import com.alwertus.spassistent.common.dto.Response;
+import com.alwertus.spassistent.common.dto.ResponseError;
+import com.alwertus.spassistent.common.dto.ResponseOk;
 import com.alwertus.spassistent.user.model.User;
 import com.alwertus.spassistent.user.service.UserService;
 import com.alwertus.spassistent.user.view.EmailConfirmRequest;

@@ -3,7 +3,7 @@ package com.alwertus.spassistent.auth.controller;
 import com.alwertus.spassistent.auth.service.TokenService;
 import com.alwertus.spassistent.auth.view.AuthenticationRequest;
 import com.alwertus.spassistent.auth.view.AuthenticationResponseOk;
-import com.alwertus.spassistent.common.view.ResponseError;
+import com.alwertus.spassistent.common.dto.ResponseError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
