@@ -1,16 +1,11 @@
 package com.alwertus.spassistent.parts.feeding.controller;
 
-import com.alwertus.spassistent.common.dto.Response;
-import com.alwertus.spassistent.common.dto.ResponseOk;
-import com.alwertus.spassistent.common.dto.ResponseOkText;
+import com.alwertus.spassistent.common.dto.*;
 import com.alwertus.spassistent.parts.feeding.dto.*;
 import com.alwertus.spassistent.parts.feeding.service.FeedingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,9 +35,9 @@ public class FeedingController {
     }
 
     @PostMapping("/addAccess")
-    public Response addAccess(@RequestBody AddAccessRq rq) {
+    public Response addAccess(@RequestBody RequestOneString rq) {
         if (!feedingService.isUserGetAccess()) {
-            feedingService.addAccess(rq.getAccessId());
+            feedingService.addAccess(rq.getValue());
         }
 
         return new ResponseOk();
@@ -72,6 +67,17 @@ public class FeedingController {
         feedingService.newInterval(rq.getHour(), rq.getMin());
 
         return new ResponseOk();
+    }
+
+    @PostMapping("/getInviteString")
+    public Response getInviteString() {
+        return new ResponseOkText(feedingService.getInviteString());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public Response errorHandler(Exception e) {
+        log.error("ErrorHandler: " + e.getMessage());
+        return new ResponseError(e.getMessage());
     }
 
 

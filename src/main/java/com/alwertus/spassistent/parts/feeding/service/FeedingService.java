@@ -57,6 +57,10 @@ public class FeedingService {
     }
 
     public void addAccess(@NonNull String accessId) {
+        feedingPropertiesRepository
+                .findById(accessId)
+                .orElseThrow(() -> new RuntimeException(String.format("Invite string '%s' not found", accessId)));
+
         FeedingUserOptions newUserOptions = new FeedingUserOptions();
         newUserOptions.setUser(userService.getCurrentUser());
         newUserOptions.setAccessId(accessId);
@@ -102,7 +106,6 @@ public class FeedingService {
         if (breast.length() > 0)
             feeding.setBreast(breast.substring(0, 1));
 
-        log.debug("Add new timer " + feeding);
         feedingRepository.save(feeding);
     }
 
@@ -114,6 +117,14 @@ public class FeedingService {
         props.setIntervalMin(min);
 
         feedingPropertiesRepository.save(props);
+    }
+
+    public String getInviteString() {
+        Optional<FeedingUserOptions> userOptions = getCurrentUserOptions();
+        if (userOptions.isEmpty())
+            return null;
+
+        return userOptions.get().getAccessId();
     }
 
 }
